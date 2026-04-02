@@ -90,128 +90,104 @@
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
         
+        .players-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .players-table th,
+        .players-table td {
+            border: 1px solid #555;
+            padding: 8px 5px;
+            text-align: center;
+            color: white;
+            min-width: 50px;
+        }
+
+        .players-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .players-table th:first-child,
+        .players-table td:first-child {
+            background-color: #333;
+            font-weight: 600;
+            min-width: 45px;
+            font-size: 11px;
+        }
+
+        .players-table th:last-child,
+        .players-table td:last-child {
+            background-color: rgba(102, 126, 234, 0.3);
+            font-weight: bold;
+            min-width: 55px;
+        }
+
+        .players-table tr:nth-child(even) td:not(:first-child):not(:last-child) {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .players-table td.active-col {
+            background-color: rgba(102, 126, 234, 0.2) !important;
+        }
+
+        .players-table .name-input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 11px;
+            width: 100%;
+            padding: 5px 2px;
+            text-align: center;
+        }
+
+        .players-table .name-input:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .players-table .score-input {
+            width: 100%;
+            padding: 6px 2px;
+            border: none;
+            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .players-table .score-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .players-table .score-input:focus {
+            background-color: rgba(255, 255, 255, 0.25);
+            outline: none;
+        }
+
+        .players-table .total-cell {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
         .players-container {
             background-color: #444;
             border-radius: 20px;
-            padding: 30px;
+            padding: 15px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            overflow-x: auto;
         }
-        
-        .players-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .player-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px;
-            padding: 25px;
-            color: white;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-        
-        .player-card.active {
-            box-shadow: 0 0 0 4px #667eea;
-            position: relative;
-        }
-        
-        .player-card.active::before {
-            content: "当前计分";
-            position: absolute;
-            top: -10px;
-            right: 20px;
-            background: #667eea;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .player-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .player-name {
-            font-size: 22px;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-        }
-        
-        .player-name:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .player-id {
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-        
-        .score-inputs {
-            display: grid;
-            gap: 10px;
-        }
-        
-        .score-input-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .round-label {
-            width: 60px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        .score-input {
-            width: 50%;
-            padding: 8px;
-            border: none;
-            border-radius: 8px;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-        }
-        
-        .score-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-        
-        .score-input:focus {
-            background-color: rgba(255, 255, 255, 0.3);
-            outline: none;
-        }
-        
-        .player-total {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 2px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .total-label {
-            font-size: 16px;
-        }
-        
-        .total-score {
-            font-size: 28px;
-            font-weight: bold;
+
+        .table-wrapper {
+            overflow-y: auto;
+            max-height: 60vh;
+            margin: 0 -5px;
+            padding: 0 5px;
         }
         
         .summary-section {
@@ -292,21 +268,61 @@
         }
         
         @media (max-width: 768px) {
-            .players-grid {
-                grid-template-columns: 1fr;
+            .table-wrapper {
+                max-height: 55vh;
             }
-            
+
+            .players-table th,
+            .players-table td {
+                padding: 6px 3px;
+                min-width: 40px;
+                font-size: 11px;
+            }
+
+            .players-table th:first-child,
+            .players-table td:first-child {
+                min-width: 40px;
+                font-size: 10px;
+            }
+
+            .players-table th:last-child,
+            .players-table td:last-child {
+                min-width: 45px;
+            }
+
+            .players-table .name-input {
+                font-size: 10px;
+            }
+
+            .players-table .score-input {
+                padding: 5px 2px;
+                font-size: 11px;
+            }
+
+            .players-table .total-cell {
+                font-size: 12px;
+            }
+
             .config-panel {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .config-item {
                 width: 100%;
             }
-            
+
             h1 {
-                font-size: 1.8em;
+                font-size: 1.5em;
+            }
+
+            .summary-section {
+                margin-top: 20px;
+                padding: 15px;
+            }
+
+            .players-container {
+                padding: 10px;
             }
         }
     </style>
@@ -329,9 +345,11 @@
         </div>
         
         <div class="players-container">
-            <div id="playersGrid" class="players-grid"></div>
-            
-            <div style="text-align: center; margin: 20px 0;">
+            <div class="table-wrapper">
+                <table id="playersTable" class="players-table"></table>
+            </div>
+
+            <div style="text-align: center; margin: 15px 0;">
                 <button onclick="addRound()">增加轮数</button>
             </div>
             
@@ -401,52 +419,58 @@
         }
         
         function updatePlayersGrid() {
-            const playersGrid = document.getElementById('playersGrid');
-            playersGrid.innerHTML = '';
+            const playersTable = document.getElementById('playersTable');
             
+            // 生成表头 - 第一列是轮次标签，后面每列是一个玩家
+            let headerHTML = '<thead><tr><th>轮次</th>';
             gameData.players.forEach((player, playerIndex) => {
                 const isActive = playerIndex === gameData.currentPlayerIndex;
-                
-                const playerCard = document.createElement('div');
-                playerCard.className = `player-card ${isActive ? 'active' : ''}`;
-                
-                const scoreInputsHTML = Array(gameData.totalRounds).fill(0).map((_, roundIndex) => {
-                    const roundNumber = roundIndex + 1;
-                    
-                    return `
-                        <div class="score-input-row">
-                            <span class="round-label">第${roundNumber}轮</span>
-                            <input 
-                                type="number" 
-                                class="score-input" 
-                                placeholder="输入分数"
-                                value="${player.scores[roundIndex] || ''}"
-                                data-player-index="${playerIndex}"
-                                data-round-index="${roundIndex}"
-                                onchange="updateScore(${playerIndex}, ${roundIndex}, this.value)"
-                            >
-                        </div>
-                    `;
-                }).join('');
-                
-                playerCard.innerHTML = `
-                    <div class="player-header">
-                        <div 
-                            class="player-name" 
-                            contenteditable="true"
-                            onblur="updatePlayerName(${playerIndex}, this.textContent)"
-                        >${player.name}</div>
-                        <div class="player-id">#${player.id}</div>
-                    </div>
-                    <div class="score-inputs">${scoreInputsHTML}</div>
-                    <div class="player-total">
-                        <span class="total-label">总分</span>
-                        <span class="total-score">${player.total}</span>
-                    </div>
-                `;
-                
-                playersGrid.appendChild(playerCard);
+                headerHTML += `<th class="${isActive ? 'active-col' : ''}">
+                    <input 
+                        type="text" 
+                        class="name-input" 
+                        value="${player.name}"
+                        data-player-index="${playerIndex}"
+                        onblur="updatePlayerName(${playerIndex}, this.value)"
+                    >
+                </th>`;
             });
+            headerHTML += '<th>总分</th></tr></thead>';
+            
+            // 生成表格内容 - 每行是一轮，每列是某玩家的分数
+            let bodyHTML = '<tbody>';
+            for (let roundIndex = 0; roundIndex < gameData.totalRounds; roundIndex++) {
+                bodyHTML += `<tr><td>第${roundIndex + 1}轮</td>`;
+                
+                gameData.players.forEach((player, playerIndex) => {
+                    const isActive = playerIndex === gameData.currentPlayerIndex;
+                    bodyHTML += `<td class="${isActive ? 'active-col' : ''}">
+                        <input 
+                            type="number" 
+                            class="score-input" 
+                            placeholder="-"
+                            value="${player.scores[roundIndex] || ''}"
+                            data-player-index="${playerIndex}"
+                            data-round-index="${roundIndex}"
+                            onchange="updateScore(${playerIndex}, ${roundIndex}, this.value)"
+                        >
+                    </td>`;
+                });
+                
+                bodyHTML += '</tr>';
+            }
+            
+            // 总分行
+            bodyHTML += '<tr><td><b>总分</b></td>';
+            gameData.players.forEach((player, playerIndex) => {
+                const isActive = playerIndex === gameData.currentPlayerIndex;
+                bodyHTML += `<td class="total-cell ${isActive ? 'active-col' : ''}">${player.total}</td>`;
+            });
+            bodyHTML += '<td>-</td></tr>';
+            
+            bodyHTML += '</tbody>';
+            
+            playersTable.innerHTML = headerHTML + bodyHTML;
         }
         
         function updatePlayerName(playerIndex, newName) {
@@ -462,6 +486,18 @@
             
             // 重新计算总分
             recalculateTotal(playerIndex);
+            
+            // 更新表格中的总分显示（最后一行的对应列）
+            const table = document.getElementById('playersTable');
+            const tbody = table.querySelector('tbody');
+            const totalRow = tbody.lastElementChild;
+            if (totalRow) {
+                const totalCells = totalRow.querySelectorAll('td');
+                // playerIndex + 1 因为第一列是标签
+                if (totalCells[playerIndex + 1]) {
+                    totalCells[playerIndex + 1].textContent = gameData.players[playerIndex].total;
+                }
+            }
             
             // 如果当前玩家已完成本轮计分，自动进入下一玩家
             setTimeout(() => {
