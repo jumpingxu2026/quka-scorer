@@ -351,41 +351,70 @@
         let gameData = {
             players: [],
             currentRound: 1,
-            totalRounds: 5,
+            totalRounds: 8,
             currentPlayerIndex: 0
         };
-        
+
+        const STORAGE_KEY = 'quka_score_data';
+
+        // 保存数据到本地存储
+        function saveGameData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(gameData));
+        }
+
+        // 从本地存储加载数据
+        function loadGameData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.players && data.players.length > 0) {
+                        gameData = data;
+                        return true;
+                    }
+                } catch (e) {
+                    console.log('加载数据失败');
+                }
+            }
+            return false;
+        }
+
+        // 清除保存的数据
+        function clearGameData() {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+
         function generateDefaultNames(count) {
             return Array(count).fill(0).map((_, i) => `玩家${i + 1}`);
         }
         
         function setupGame() {
-            if (!confirm('确定要开始游戏吗？')) {
+            if (!confirm('确定要开始游戏吗？这将清除之前的数据。')) {
                 return;
             }
-            
+
             const playerCount = parseInt(document.getElementById('playerCount').value) || 4;
             const roundCount = parseInt(document.getElementById('roundCount').value) || 8;
-            
+
             if (playerCount < 2 || playerCount > 10) {
                 alert('玩家数量必须在2-10人之间');
                 return;
             }
-            
+
             if (roundCount < 1 || roundCount > 50) {
                 alert('游戏轮数必须在1-50之间');
                 return;
             }
-            
+
             gameData = {
                 players: [],
                 currentRound: 1,
                 totalRounds: roundCount,
                 currentPlayerIndex: 0
             };
-            
+
             const defaultNames = generateDefaultNames(playerCount);
-            
+
             for (let i = 0; i < playerCount; i++) {
                 gameData.players.push({
                     id: i + 1,
@@ -394,7 +423,8 @@
                     total: 0
                 });
             }
-            
+
+            saveGameData();
             updateUI();
         }
         
@@ -451,24 +481,28 @@
         function updatePlayerName(playerIndex, newName) {
             if (newName && newName.trim() !== '') {
                 gameData.players[playerIndex].name = newName.trim();
+                saveGameData();
                 updateSummary();
             }
         }
-        
+
         function updateScore(playerIndex, roundIndex, value) {
             const score = parseInt(value) || 0;
             gameData.players[playerIndex].scores[roundIndex] = score;
-            
+
             // 重新计算总分
             recalculateTotal(playerIndex);
-            
+
+            // 自动保存
+            saveGameData();
+
             // 如果当前玩家已完成本轮计分，自动进入下一玩家
             setTimeout(() => {
                 if (playerIndex === gameData.currentPlayerIndex) {
                     nextPlayer();
                 }
             }, 100);
-            
+
             updateSummary();
         }
         
@@ -479,7 +513,8 @@
         
         function nextPlayer() {
             gameData.currentPlayerIndex = (gameData.currentPlayerIndex + 1) % gameData.players.length;
-            
+            saveGameData();
+
             // 如果已经轮完所有玩家，进入下一轮
             if (gameData.currentPlayerIndex === 0) {
                 nextRound();
@@ -487,11 +522,12 @@
                 updateUI();
             }
         }
-        
+
         function nextRound() {
             if (gameData.currentRound < gameData.totalRounds) {
                 gameData.currentRound++;
                 gameData.currentPlayerIndex = 0;
+                saveGameData();
                 updateUI();
             } else {
                 alert('所有轮次已完成！');
@@ -524,9 +560,10 @@
             gameData.players.forEach(player => {
                 player.scores.push(0);
             });
+            saveGameData();
             updateUI();
         }
-        
+
         function resetScores() {
             if (confirm('确定要重置所有分数吗？')) {
                 gameData.players.forEach(player => {
@@ -535,14 +572,39 @@
                 });
                 gameData.currentRound = 1;
                 gameData.currentPlayerIndex = 0;
+                saveGameData();
                 updateUI();
             }
         }
         
         // 初始化游戏
         document.addEventListener('DOMContentLoaded', () => {
-            setupGame();
-            
+            // 尝试加载已保存的数据
+            if (!loadGameData()) {
+                // 没有保存数据，创建默认游戏
+                const playerCount = parseInt(document.getElementById('playerCount').value) || 4;
+                const roundCount = parseInt(document.getElementById('roundCount').value) || 8;
+
+                gameData = {
+                    players: [],
+                    currentRound: 1,
+                    totalRounds: roundCount,
+                    currentPlayerIndex: 0
+                };
+
+                const defaultNames = generateDefaultNames(playerCount);
+                for (let i = 0; i < playerCount; i++) {
+                    gameData.players.push({
+                        id: i + 1,
+                        name: defaultNames[i],
+                        scores: Array(roundCount).fill(0),
+                        total: 0
+                    });
+                }
+                saveGameData();
+            }
+            updateUI();
+
             // 为数字输入框添加键盘支持
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
