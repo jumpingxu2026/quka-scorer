@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUKA游戏计分牌</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background-color: #444;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #fff;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .config-panel {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .config-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        label {
+            font-weight: 600;
+            color: #ccc;
+        }
+        
+        input[type="number"], input[type="text"] {
+            padding: 12px 15px;
+            border: 2px solid #666;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            background-color: #555;
+            color: #fff;
+        }
+        
+        input[type="number"]:focus, input[type="text"]:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .players-container {
+            background-color: #444;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            overflow-x: auto;
+        }
+        
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .player-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .player-card.active {
+            box-shadow: 0 0 0 4px #667eea;
+            position: relative;
+        }
+        
+        .player-card.active::before {
+            content: "当前计分";
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .player-name {
+            font-size: 22px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        
+        .player-name:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .player-id {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .score-inputs {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .score-input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .round-label {
+            width: 60px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .score-input {
+            width: 50%;
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .score-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .score-input:focus {
+            background-color: rgba(255, 255, 255, 0.3);
+            outline: none;
+        }
+        
+        .player-total {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .total-label {
+            font-size: 16px;
+        }
+        
+        .total-score {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .summary-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: #444;
+            border-radius: 15px;
+            color: white;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .summary-item {
+            text-align: center;
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .ranking-list {
+            text-align: left;
+            margin-top: 10px;
+        }
+        
+        .ranking-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+        
+        .ranking-position {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #ffd700;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .delete-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .reset-btn {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .winner {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .config-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .config-item {
+                width: 100%;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>QUKA游戏计分牌</h1>
+            <div class="config-panel">
+                <div class="config-item">
+                    <label for="playerCount">玩家数量 (2-10人):</label>
+                    <input type="number" id="playerCount" min="2" max="10" value="4">
+                </div>
+                <div class="config-item">
+                    <label for="roundCount">游戏轮数:</label>
+                    <input type="number" id="roundCount" min="1" max="50" value="8">
+                </div>
+                <button onclick="setupGame()">开始游戏</button>
+            </div>
+        </div>
+        
+        <div class="players-container">
+            <div id="playersGrid" class="players-grid"></div>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button onclick="addRound()">增加轮数</button>
+            </div>
+            
+            <div class="summary-section">
+                <h3 style="text-align: center; margin-bottom: 20px;">全部人数得分排行榜</h3>
+                <div id="rankingList" class="ranking-list"></div>
+            </div>
+            
+            
+        </div>
+    </div>
+
+    <script>
+        let gameData = {
+            players: [],
+            currentRound: 1,
+            totalRounds: 5,
+            currentPlayerIndex: 0
+        };
+        
+        function generateDefaultNames(count) {
+            return Array(count).fill(0).map((_, i) => `玩家${i + 1}`);
+        }
+        
+        function setupGame() {
+            if (!confirm('确定要开始游戏吗？')) {
+                return;
+            }
+            
+            const playerCount = parseInt(document.getElementById('playerCount').value) || 4;
+            const roundCount = parseInt(document.getElementById('roundCount').value) || 8;
+            
+            if (playerCount < 2 || playerCount > 10) {
+                alert('玩家数量必须在2-10人之间');
+                return;
+            }
+            
+            if (roundCount < 1 || roundCount > 50) {
+                alert('游戏轮数必须在1-50之间');
+                return;
+            }
+            
+            gameData = {
+                players: [],
+                currentRound: 1,
+                totalRounds: roundCount,
+                currentPlayerIndex: 0
+            };
+            
+            const defaultNames = generateDefaultNames(playerCount);
+            
+            for (let i = 0; i < playerCount; i++) {
+                gameData.players.push({
+                    id: i + 1,
+                    name: defaultNames[i],
+                    scores: Array(roundCount).fill(0),
+                    total: 0
+                });
+            }
+            
+            updateUI();
+        }
+        
+        function updateUI() {
+            updatePlayersGrid();
+            updateSummary();
+        }
+        
+        function updatePlayersGrid() {
+            const playersGrid = document.getElementById('playersGrid');
+            playersGrid.innerHTML = '';
+            
+            gameData.players.forEach((player, playerIndex) => {
+                const isActive = playerIndex === gameData.currentPlayerIndex;
+                
+                const playerCard = document.createElement('div');
+                playerCard.className = `player-card ${isActive ? 'active' : ''}`;
+                
+                const scoreInputsHTML = Array(gameData.totalRounds).fill(0).map((_, roundIndex) => {
+                    const roundNumber = roundIndex + 1;
+                    
+                    return `
+                        <div class="score-input-row">
+                            <span class="round-label">第${roundNumber}轮</span>
+                            <input 
+                                type="number" 
+                                class="score-input" 
+                                placeholder="输入分数"
+                                value="${player.scores[roundIndex] || ''}"
+                                data-player-index="${playerIndex}"
+                                data-round-index="${roundIndex}"
+                                onchange="updateScore(${playerIndex}, ${roundIndex}, this.value)"
+                            >
+                        </div>
+                    `;
+                }).join('');
+                
+                playerCard.innerHTML = `
+                    <div class="player-header">
+                        <div 
+                            class="player-name" 
+                            contenteditable="true"
+                            onblur="updatePlayerName(${playerIndex}, this.textContent)"
+                        >${player.name}</div>
+                        <div class="player-id">#${player.id}</div>
+                    </div>
+                    <div class="score-inputs">${scoreInputsHTML}</div>
+                    <div class="player-total">
+                        <span class="total-label">总分</span>
+                        <span class="total-score">${player.total}</span>
+                    </div>
+                `;
+                
+                playersGrid.appendChild(playerCard);
+            });
+        }
+        
+        function updatePlayerName(playerIndex, newName) {
+            if (newName && newName.trim() !== '') {
+                gameData.players[playerIndex].name = newName.trim();
+                updateSummary();
+            }
+        }
+        
+        function updateScore(playerIndex, roundIndex, value) {
+            const score = parseInt(value) || 0;
+            gameData.players[playerIndex].scores[roundIndex] = score;
+            
+            // 重新计算总分
+            recalculateTotal(playerIndex);
+            
+            // 如果当前玩家已完成本轮计分，自动进入下一玩家
+            setTimeout(() => {
+                if (playerIndex === gameData.currentPlayerIndex) {
+                    nextPlayer();
+                }
+            }, 100);
+            
+            updateSummary();
+        }
+        
+        function recalculateTotal(playerIndex) {
+            const player = gameData.players[playerIndex];
+            player.total = player.scores.reduce((sum, score) => sum + (score || 0), 0);
+        }
+        
+        function nextPlayer() {
+            gameData.currentPlayerIndex = (gameData.currentPlayerIndex + 1) % gameData.players.length;
+            
+            // 如果已经轮完所有玩家，进入下一轮
+            if (gameData.currentPlayerIndex === 0) {
+                nextRound();
+            } else {
+                updateUI();
+            }
+        }
+        
+        function nextRound() {
+            if (gameData.currentRound < gameData.totalRounds) {
+                gameData.currentRound++;
+                gameData.currentPlayerIndex = 0;
+                updateUI();
+            } else {
+                alert('所有轮次已完成！');
+            }
+        }
+        
+        function updateSummary() {
+            const rankingList = document.getElementById('rankingList');
+            const players = [...gameData.players].sort((a, b) => b.total - a.total);
+            
+            // 更新排行榜
+            rankingList.innerHTML = players.map((player, index) => `
+                <div class="ranking-item">
+                    <span><span class="ranking-position">第${index + 1}名</span> ${player.name}</span>
+                    <span>${player.total}分</span>
+                </div>
+            `).join('');
+        }
+        
+        function updateCurrentRoundIndicator() {
+            // 保留此函数以确保代码兼容性
+        }
+        
+        function addRound() {
+            if (gameData.totalRounds >= 50) {
+                alert('游戏轮数已达到上限50轮');
+                return;
+            }
+            gameData.totalRounds++;
+            gameData.players.forEach(player => {
+                player.scores.push(0);
+            });
+            updateUI();
+        }
+        
+        function resetScores() {
+            if (confirm('确定要重置所有分数吗？')) {
+                gameData.players.forEach(player => {
+                    player.scores = Array(gameData.totalRounds).fill(0);
+                    player.total = 0;
+                });
+                gameData.currentRound = 1;
+                gameData.currentPlayerIndex = 0;
+                updateUI();
+            }
+        }
+        
+        // 初始化游戏
+        document.addEventListener('DOMContentLoaded', () => {
+            setupGame();
+            
+            // 为数字输入框添加键盘支持
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const activeElement = document.activeElement;
+                    if (activeElement.classList.contains('score-input')) {
+                        nextPlayer();
+                    }
+                }
+            });
+        });
+        
+        // 添加分数快速输入功能
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('score-input')) {
+                e.target.select();
+            }
+        });
+    </script>
+</body>
+</html>
