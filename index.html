@@ -74,7 +74,7 @@
         }
         
         button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #9b59b6;
             color: white;
             border: none;
             padding: 12px 30px;
@@ -87,7 +87,7 @@
         
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 20px rgba(155, 89, 182, 0.4);
         }
         
         .players-table {
@@ -106,7 +106,7 @@
         }
 
         .players-table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #9b59b6;
             font-weight: 600;
             font-size: 12px;
         }
@@ -121,17 +121,11 @@
 
         .players-table th:last-child,
         .players-table td:last-child {
-            background-color: rgba(102, 126, 234, 0.3);
-            font-weight: bold;
-            min-width: 55px;
+            border-right: none;
         }
 
-        .players-table tr:nth-child(even) td:not(:first-child):not(:last-child) {
+        .players-table tr:nth-child(even) td:not(:first-child) {
             background-color: rgba(255, 255, 255, 0.03);
-        }
-
-        .players-table td.active-col {
-            background-color: rgba(102, 126, 234, 0.2) !important;
         }
 
         .players-table .name-input {
@@ -169,11 +163,6 @@
         .players-table .score-input:focus {
             background-color: rgba(255, 255, 255, 0.25);
             outline: none;
-        }
-
-        .players-table .total-cell {
-            font-size: 14px;
-            font-weight: bold;
         }
 
         .players-container {
@@ -287,7 +276,7 @@
 
             .players-table th:last-child,
             .players-table td:last-child {
-                min-width: 45px;
+                border-right: none;
             }
 
             .players-table .name-input {
@@ -297,10 +286,6 @@
             .players-table .score-input {
                 padding: 5px 2px;
                 font-size: 11px;
-            }
-
-            .players-table .total-cell {
-                font-size: 12px;
             }
 
             .config-panel {
@@ -424,8 +409,7 @@
             // 生成表头 - 第一列是轮次标签，后面每列是一个玩家
             let headerHTML = '<thead><tr><th>轮次</th>';
             gameData.players.forEach((player, playerIndex) => {
-                const isActive = playerIndex === gameData.currentPlayerIndex;
-                headerHTML += `<th class="${isActive ? 'active-col' : ''}">
+                headerHTML += `<th>
                     <input 
                         type="text" 
                         class="name-input" 
@@ -435,7 +419,7 @@
                     >
                 </th>`;
             });
-            headerHTML += '<th>总分</th></tr></thead>';
+            headerHTML += '</tr></thead>';
             
             // 生成表格内容 - 每行是一轮，每列是某玩家的分数
             let bodyHTML = '<tbody>';
@@ -443,8 +427,7 @@
                 bodyHTML += `<tr><td>第${roundIndex + 1}轮</td>`;
                 
                 gameData.players.forEach((player, playerIndex) => {
-                    const isActive = playerIndex === gameData.currentPlayerIndex;
-                    bodyHTML += `<td class="${isActive ? 'active-col' : ''}">
+                    bodyHTML += `<td>
                         <input 
                             type="number" 
                             class="score-input" 
@@ -459,14 +442,6 @@
                 
                 bodyHTML += '</tr>';
             }
-            
-            // 总分行
-            bodyHTML += '<tr><td><b>总分</b></td>';
-            gameData.players.forEach((player, playerIndex) => {
-                const isActive = playerIndex === gameData.currentPlayerIndex;
-                bodyHTML += `<td class="total-cell ${isActive ? 'active-col' : ''}">${player.total}</td>`;
-            });
-            bodyHTML += '<td>-</td></tr>';
             
             bodyHTML += '</tbody>';
             
@@ -486,18 +461,6 @@
             
             // 重新计算总分
             recalculateTotal(playerIndex);
-            
-            // 更新表格中的总分显示（最后一行的对应列）
-            const table = document.getElementById('playersTable');
-            const tbody = table.querySelector('tbody');
-            const totalRow = tbody.lastElementChild;
-            if (totalRow) {
-                const totalCells = totalRow.querySelectorAll('td');
-                // playerIndex + 1 因为第一列是标签
-                if (totalCells[playerIndex + 1]) {
-                    totalCells[playerIndex + 1].textContent = gameData.players[playerIndex].total;
-                }
-            }
             
             // 如果当前玩家已完成本轮计分，自动进入下一玩家
             setTimeout(() => {
